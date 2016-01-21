@@ -4,7 +4,6 @@
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [secretary.core :as secretary :include-macros true]
-            [clj-url.core :as url]
             [ajax.core :refer [GET POST]])
   (:import goog.History))
 
@@ -27,8 +26,8 @@
   (.log js/console (str "something bad happened: " status " " status-text)))
 
 (defn get-group [group]
-  (println (str "Retrieving group: " (url/emit (str "/groups/" group)))
-  (GET (url/emit (str "/groups/" group))
+  (println (str "Retrieving group: " (str "/groups/" group)))
+  (GET (str "/groups/" group)
        {:handler response-handler
         :error-handler error-handler
         :response-format :json}))
