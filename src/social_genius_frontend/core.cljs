@@ -18,16 +18,14 @@
 ;; Backend communication
 
 (defn response-handler [response]
-  (println "Received response from backend")
-  (swap! app-state assoc :apps (get response "Apps"))
-  (println "Response payload" (get @app-state :apps)))
+  (println "Response payload" response))
 
 (defn error-handler [{:keys [status status-text]}]
   (.log js/console (str "something bad happened: " status " " status-text)))
 
 (defn get-group [group]
-  (println (str "Retrieving group: " (str "/groups/" group)))
-  (GET (str "/groups/" group)
+  (println (str "Retrieving members for group: " group))
+  (GET (str "/meetup/" group)
        {:handler response-handler
         :error-handler error-handler
         :response-format :json}))
@@ -58,7 +56,7 @@
   [:div
    (menu)
    [:button {:on-click (fn [e] (.preventDefault e)
-                         (get-group "Docker%20Randstad"))} "Get group"]])
+                         (get-group "Amsterdam-Ethereum-Meetup"))} "Get group"]])
 
 (defn about-page[]
   [:div

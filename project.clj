@@ -37,7 +37,7 @@
                ;; lein cljsbuild once min
                {:id "min"
                 :source-paths ["src"]
-                :compiler {:output-to "resources/public/js/compiled/social_genius_frontend.js"
+                :compiler {:output-to "resources/public/js/compiled/social_genius_frontend.min.js"
                            :main social_genius_frontend.core
                            :optimizations :advanced
                            :pretty-print false}}]}
