@@ -13,7 +13,8 @@
                  [cljs-ajax "0.5.3"]
                  [secretary "1.2.3"]
                  [clj-url "1.0.3"]
-                 [figwheel-sidecar "0.5.0"]]
+                 [figwheel-sidecar "0.5.0"]
+                 [com.andrewmcveigh/cljs-time "0.4.0"]]
 
   :plugins [[lein-cljsbuild "1.1.1"]]
 
