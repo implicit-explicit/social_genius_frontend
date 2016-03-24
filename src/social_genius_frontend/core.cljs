@@ -1,10 +1,14 @@
 (ns social_genius_frontend.core
   (:require [reagent.core :as reagent]
             [reagent.session :as session]
+            [social_genius_frontend.components :as components]
             [goog.events :as events]
             [goog.history.EventType :as EventType]
             [secretary.core :as secretary :include-macros true]
-            [ajax.core :refer [GET POST]])
+            [ajax.core :refer [GET POST]]
+            [cljs-time.periodic :as periodic]
+            [cljs-time.core :as time]
+            [cljs-time.format :as time-format])
   (:import goog.History))
 
 (enable-console-print!)
@@ -21,7 +25,7 @@
   (println "Response payload" response))
 
 (defn error-handler [{:keys [status status-text]}]
-  (.log js/console (str "something bad happened: " status " " status-text)))
+  (println (str "something bad happened: " status " " status-text)))
 
 (defn get-group [group]
   (println (str "Retrieving members for group: " group))
@@ -55,8 +59,23 @@
 (defn home-page []
   [:div
    (menu)
-   [:button {:on-click (fn [e] (.preventDefault e)
-                         (get-group "Amsterdam-Ethereum-Meetup"))} "Get group"]])
+   [:div {:class "container-fluid"}
+    [:div {:class "row" :style {:padding "3em"}}
+     [components/meetup-input get-group]]
+    [:div {:class "row" :style {:padding "3em"}}
+     [:div {:class "col-md-8"}
+      [:table {:class "table table-hover table-condensed"}
+       [:thead
+       [:tr
+        [:th "Date"]
+        [:th "Docker-Randstad"]
+        [:th "Elasticsearch"]]]
+       [:tbody
+       (for [date (take 10 (periodic/periodic-seq (time/now) (time/hours 12)))]
+           [:tr {:key date}
+            [:td date]
+            [:td "x"]
+            [:td "x"]])]]]]]])
 
 (defn about-page[]
   [:div
