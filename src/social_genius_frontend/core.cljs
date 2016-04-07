@@ -16,7 +16,7 @@
 (println "Executing frontend code")
 
 ;; App data
-(defonce app-state (reagent/atom {:text "Social Genius"}))
+(defonce app-state (reagent/atom {:text "Social Genius" :events {}}))
 
 (def date-formatter (tf/formatters :date))
 
@@ -25,8 +25,9 @@
 
 (defn response-handler [response]
   (println "Response payload" response)
-  (doseq [event-date (get response "ocamsterdam")]
-    (println (tc/from-long event-date))))
+  (doseq [[event-name event-dates] response]
+    (swap! app-state assoc-in [:events  event-name] (map tc/from-long event-dates)))
+  (println app-state))
 
 (defn error-handler [{:keys [status status-text]}]
   (println (str "something bad happened: " status " " status-text)))
@@ -73,14 +74,16 @@
        [:thead
        [:tr
         [:th "Date"]
-        [:th "Docker-Randstad"]
-        [:th "Elasticsearch"]]]
+        (for [[group-name event-date] (get @app-state :events)]
+          [:th group-name])
+        ]]
        [:tbody
        (for [date (take 30 (periodic/periodic-seq (time/now) (time/hours 24)))]
-           [:tr {:key (tf/unparse date-formatter date)}
-            [:td (tf/unparse date-formatter date)]
-            [:td "x"]
-            [:td "x"]])]]]]]])
+         (let [fdate (tf/unparse date-formatter date)]
+           [:tr {:key fdate}
+            [:td fdate]
+            (for [[group-name event-date] (get @app-state :events)]
+              [:td "x"])]))]]]]]])
 
 (defn about-page[]
   [:div
