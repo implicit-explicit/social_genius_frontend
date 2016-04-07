@@ -8,7 +8,8 @@
             [ajax.core :refer [GET POST]]
             [cljs-time.periodic :as periodic]
             [cljs-time.core :as time]
-            [cljs-time.format :as time-format])
+            [cljs-time.format :as tf]
+            [cljs-time.coerce :as tc])
   (:import goog.History))
 
 (enable-console-print!)
@@ -17,22 +18,26 @@
 ;; App data
 (defonce app-state (reagent/atom {:text "Social Genius"}))
 
+(def date-formatter (tf/formatters :date))
 
 ;;--------------------------
 ;; Backend communication
 
 (defn response-handler [response]
-  (println "Response payload" response))
+  (println "Response payload" response)
+  (doseq [event-date (get response "ocamsterdam")]
+    (println (tc/from-long event-date))))
 
 (defn error-handler [{:keys [status status-text]}]
   (println (str "something bad happened: " status " " status-text)))
 
 (defn get-group [group]
   (println (str "Retrieving members for group: " group))
-  (GET (str "/meetup/" group)
+  (GET (str "/city")
        {:handler response-handler
         :error-handler error-handler
-        :response-format :json}))
+        :response-format :json
+        :params {:meetup_group group}}))
 
 
 ;;--------------------------
@@ -71,9 +76,9 @@
         [:th "Docker-Randstad"]
         [:th "Elasticsearch"]]]
        [:tbody
-       (for [date (take 10 (periodic/periodic-seq (time/now) (time/hours 12)))]
-           [:tr {:key date}
-            [:td date]
+       (for [date (take 30 (periodic/periodic-seq (time/now) (time/hours 24)))]
+           [:tr {:key (tf/unparse date-formatter date)}
+            [:td (tf/unparse date-formatter date)]
             [:td "x"]
             [:td "x"]])]]]]]])
 
