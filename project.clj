@@ -8,6 +8,7 @@
                  [org.clojure/clojurescript "1.8.40"]
                  [reagent "0.6.0-alpha"]
                  [reagent-utils "0.1.7"]
+                 [re-frame "0.7.0"]
                  [cljs-ajax "0.5.4"]
                  [secretary "1.2.3"]
                  [clj-url "1.0.3"]

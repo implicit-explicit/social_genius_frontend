@@ -75,15 +75,17 @@
        [:tr
         [:th "Date"]
         (for [[group-name event-date] (get @app-state :events)]
-          [:th group-name])
+          [:th {:key group-name} group-name])
         ]]
        [:tbody
-       (for [date (take 30 (periodic/periodic-seq (time/now) (time/hours 24)))]
+        (doall (for [date (take 30 (periodic/periodic-seq (time/now) (time/hours 24)))]
          (let [fdate (tf/unparse date-formatter date)]
            [:tr {:key fdate}
             [:td fdate]
-            (for [[group-name event-date] (get @app-state :events)]
-              [:td "x"])]))]]]]]])
+            (for [[group-name events] (get @app-state :events)]
+              (if (some (fn [x] (time/equal? (time/date-midnight date) (time/date-midnight x))) events)
+                [:td {:key group-name} "x"]
+                [:td {:key group-name} " "]))])))]]]]]])
 
 (defn about-page[]
   [:div
